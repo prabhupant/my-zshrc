@@ -131,3 +131,44 @@ alias ll="ls -lath"
 function mkdircd() {
     mkdir -p "$@" && eval cd "\"\$$#\"";
 }
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/bojack/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/bojack/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/bojack/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/bojack/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+alias format='mvn spring-javaformat:apply'
+alias mspr='mvn spring-boot:run'
+
+
+alias pip="pip3"
+alias work="cd ~/work"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+alias ma='java -jar -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Xms1280m -Xmx1280m -Xmn256m -Xss512k -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -Duser.timezone=Asia/Kolkata -Duser.timezone=Asia/Kolkata'
+
+alias mcid='mvn clean install -DskipTests'
+alias mci='mvn clean install'
+
+export TERM=xterm-256color
+
+alias resolved='git diff -S "<<<<<<< HEAD" -S "=======" -S ">>>>>>> $(git name-rev --name-only MERGE_HEAD)" HEAD'
+alias format='mvn spring-javaformat:apply'
+
+alias ma='java -jar -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Xms1280m -Xmx1280m -Xmn256m -Xss512k -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -Duser.timezone=Asia/Kolkata -Duser.timezone=Asia/Kolkata'
+
+alias mcid='mvn clean install -DskipTests'
+alias mci='mvn clean install'
