@@ -1,15 +1,12 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
 # Path to your oh-my-zsh installation.
-export ZSH="/home/prabhu/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -31,14 +28,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
@@ -53,8 +49,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
-# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -78,7 +75,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -127,48 +124,83 @@ alias today='date +"%A, %B %-d, %Y"; echo " "; cal'
 alias work='cd ~/Work'
 alias ll="ls -lath"
 
-# Functions
-function mkdircd() {
-    mkdir -p "$@" && eval cd "\"\$$#\"";
-}
-
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/bojack/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/bojack/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/bojack/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/bojack/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 alias format='mvn spring-javaformat:apply'
 alias mspr='mvn spring-boot:run'
 
-
-alias pip="pip3"
 alias work="cd ~/work"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+#export SDKMAN_DIR="$HOME/.sdkman"
+#[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-alias ma='java -jar -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Xms1280m -Xmx1280m -Xmn256m -Xss512k -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -Duser.timezone=Asia/Kolkata -Duser.timezone=Asia/Kolkata'
-
-alias mcid='mvn clean install -DskipTests'
-alias mci='mvn clean install'
-
+# Tmux color issues with zsh
 export TERM=xterm-256color
 
+# Check if there are any unresolved merge conflicts
 alias resolved='git diff -S "<<<<<<< HEAD" -S "=======" -S ">>>>>>> $(git name-rev --name-only MERGE_HEAD)" HEAD'
+
+# Spring related life savers
 alias format='mvn spring-javaformat:apply'
-
 alias ma='java -jar -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Xms1280m -Xmx1280m -Xmn256m -Xss512k -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -Duser.timezone=Asia/Kolkata -Duser.timezone=Asia/Kolkata'
-
 alias mcid='mvn clean install -DskipTests'
 alias mci='mvn clean install'
+alias mcis='mvn clean install -Dcheckstyle.skip'
+alias springrun='mvn spring-boot:run'
+
+function pgstart() {
+    docker run -d \
+      --name dev-postgres \
+      -e POSTGRES_USER=${PG_USER} \
+      -e POSTGRES_PASSWORD=${PG_PASSWD} \
+      -v ${HOME}/servce-dir/:/var/lib/postgresql/data \
+      -p ${PG_LOCAL_PORT}:${PG_PORT} \
+      postgres:12.4
+}
+
+function pgadstart() {
+    docker run --name dev-pgadmin \
+      -e "PGADMIN_DEFAULT_EMAIL=" \
+      -e "PGADMIN_DEFAULT_PASSWORD=" \
+      -p 5480:80 \
+      -d dpage/pgadmin4:5.6
+}
+
+# Set python path to the base of working directory
+function setpypa() {
+  export PYTHONPATH=.:$HOME/<dir-base>:${PYTHONPATH}
+}
+
+export PATH=/usr/local/opt/m4/bin:/usr/local/opt/openjdk@11/bin:/usr/local/bin/:$PATH
+export JAVA_HOME=$(/usr/libexec/java_home)
+
+# Open ranger in the current directory
+function ranger {
+    local IFS=$'\t\n'
+    local tempfile="$(mktemp -t tmp.XXXXXX)"
+    local ranger_cmd=(
+        command
+        ranger
+        --cmd="map Q chain shell echo %d > "$tempfile"; quitall"
+    )
+
+    ${ranger_cmd[@]} "$@"
+    if [[ -f "$tempfile" ]] && [[ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]]; then
+        cd -- "$(cat "$tempfile")" || return
+    fi
+    command rm -f -- "$tempfile" 2>/dev/null
+}
+
+# Mac M1 related docker issues
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+
+alias renumber='tmux movew -r'
+
+# Uncomment below three lines if faced with SSL issues with urllib
+# CERT_PATH=$(python3 -m certifi)
+# export SSL_CERT_FILE=${CERT_PATH}
+# export REQUESTS_CA_BUNDLE=${CERT_PATH}
+
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
