@@ -204,3 +204,6 @@ alias renumber='tmux movew -r'
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
+
+# Check if all the conflicts have been resolved
+alias resolved='git diff -S "<<<<<<< HEAD" -S "=======" -S ">>>>>>> $(git name-rev --name-only MERGE_HEAD)" HEAD'
